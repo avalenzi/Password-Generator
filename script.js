@@ -1,111 +1,58 @@
 
 
-// // The user will be prompted to choose from the following password criteria
-// // Length (must be between 8 and 128 characters) 
-// // Validate user input and ensure that at least one character type is selected.
-// // Once all prompts are answered, the user will be presented with a password matching the answered prompts. Displaying the generated password in an alert is acceptable, but attempt to write the password to the page instead.
-
-// Create strings to pull from
-var lowerCharacters = "abcdefghijklmnopqrstuvwxyz";
-var upperCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-var numericCharacters = "0123456789";
-var specialCharacters = "!#$%&'()*+,-./:;<=>?@[]^_`{}~";
-
-// Combined strings 
-var combinedCharacters = [];
-
-
-// Create user-slected criteria
-var userInput = parseInt(prompt(
-    "How many characters would you like your password to contain?"
-    ));
-
-
-// confirm boxes
-var lowercase = confirm('Click OK to confirm using lowercase characters');
-var uppercase = confirm('Click OK to confirm using uppercase characters');
-var numbers = confirm('Click OK to confirm using numbers');
-var special = confirm('Click OK to confirm using special characters');
-
-
-function userLength(){
-
-    // Conditional statement to check if password length is a number. Prompts end if this evaluates false
-    if (isNaN(userInput) === true) {
-        alert("Password length must be provided as a number");
-        return;
-    }
-
-    // Conditional statement to check if password length is at least 8 characters long. Prompts end if this evaluates false
-    if (userInput < 8) {
-        alert("Password length must be at least 8 characters");
-        return;
-    }
-
-    // Conditional statement to check if password length is less than 128 characters long. Prompts end if this evaluates false
-    if (userInput > 128) {
-        alert("Password length must less than 129 characters");
-        return;
-    }
-
-    if (lowercase){
-        combinedCharacters += lowerCharacters;
-    }
-    if (uppercase){
-        combinedCharacters += upperCharacters
-    }
-    if (numbers){
-        combinedCharacters += numericCharacters
-    }
-    if (special){
-        combinedCharacters += specialCharacters
-    }
-
-      // Conditional statement to check if user does not include any types of characters. Password generator ends if all four variables evaluate to false
-    if (
-        lowerCharacters === false &&
-        upperCharacters === false &&
-        numericCharacters === false &&
-        specialCharacters === false
-    ) {
-        alert("Must select at least one character type");
-        return;
-    }
-
+var generateBtn = document.querySelector("#generate");
+// var generateBtn = document.getElementById("generate");
+var lowercase = "abcdefghijklmnopqrstuvwxyz";
+var uppercase = lowercase.toUpperCase();
+var special = "!#%&'()*+,-./:;<=>?@[]^_`{|}~";
+var numbers = "123456789";
+// Write password to the #password input
+function writePassword() {
+  var params = {
+    lowercase: confirm("Would you like to use lowercase characters?"),
+    uppercase: confirm("Would you like to use uppercase characters?"),
+    specialChars: confirm("Would you like to use special characters?"),
+    numericChars: confirm("Would you like to use numeric characters?")
+  };
+  while (
+    params.length < 8 ||
+    params.length > 128 ||
+    params.length === undefined
+  ) {
+    params.length = parseInt(
+      prompt(
+        "How long would you like your password to be? Greater than 8 less than 128"
+      )
+    );
+  }
+  var password = generatePassword(params);
+  var passwordText = document.querySelector("#password");
+  passwordText.value = password;
 }
-
-// Generate random letters from array
-function randomLetter (arr) {
-    let letter = arr[Math.floor(Math.random() * arr.length)];
-    return letter;
-}
-
-// Loop through array 
-function generate (arr) {
-    userLength();
-    var password = " ";
-    for(var i = 0; i < userInput; i++) {
-        password += randomLetter(arr);
+function generatePassword(options){
+  var password = "";
+  for (let i =0; i < options.length; i++) {
+    if (options.uppercase) {
+      password += getRandomValue(uppercase);
     }
-    return password;
+    if (options.lowercase) {
+      password += getRandomValue(lowercase);
+    }
+    if (options.specialChars) {
+      password += getRandomValue(special);
+    }
+    if (options.numbers) {
+      password += getRandomValue(numbers);
+    }
+  }
+ 
+  
+  return password.slice(0, options.length);
 }
+  
+  function getRandomValue(str) {
+    return str[Math.floor(Math.random() * str.length)];
+  }
+// Add event listener to generate button
+generateBtn.addEventListener("click", writePassword);
 
-// Grab reference to textarea ID 
-var box = document.getElementById('passTextBox');
-
-// Fire an on click event when the button is clicked and set the textContent to the generated password
-generateBtn.onclick = function(){
-    var pass = generate(combinedCharacters);
-    box.textContent = pass;
-}
-
-// Copy to clipboard event
-document.querySelector('#copyBtn').addEventListener('click', function () {
-    document.querySelector('#passTextBox').select();
-    document.execCommand('copy');
-  });
-
-
-// started with declaring arrays to pull information from 
-// build the function to prompt user for input 
-    // prompt 
